@@ -12,4 +12,6 @@ model User {
     updatedAt DateTime @updatedAt
 
     authAccounts AuthAccount[]
+
+    refreshTokens RefreshToken[]
 }

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import { registerSchema } from "./auth.validation";
-import { registerUser } from "./auth.service";
+import { loginSchema, registerSchema } from "./auth.validation";
+import { loginUser, registerUser } from "./auth.service";
 
 export async function register(
   req: Request,
@@ -16,6 +16,21 @@ export async function register(
       success: true,
       data: user,
       message: "User created",
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function login(req: Request, res: Response, next: NextFunction) {
+  try {
+    const validatedData = loginSchema.parse(req.body);
+
+    const data = await loginUser(validatedData);
+
+    return res.status(200).json({
+      success: true,
+      data,
     });
   } catch (error) {
     next(error);

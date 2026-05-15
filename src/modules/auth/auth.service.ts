@@ -1,7 +1,9 @@
 import { AuthProvider } from "../../generated/prisma/enums";
 import prisma from "../../lib/prisma";
 import { AppError } from "../../utils/AppError";
-import { RegisterInput } from "./auth.validation";
+import { generateAccessToken } from "../../utils/jwt";
+import { generateRefreshToken } from "../../utils/refresh-token";
+import { LoginInput, RegisterInput } from "./auth.validation";
 import bcrypt from "bcrypt";
 
 export async function registerUser(data: RegisterInput) {
@@ -37,4 +39,47 @@ export async function registerUser(data: RegisterInput) {
   });
 
   return user;
+}
+
+export async function loginUser(data: LoginInput) {
+  const authAccount = await prisma.authAccount.findFirst({
+    where: {
+      provider: AuthProvider.EMAIL,
+      providerAccountId: data.email,
+    },
+    include: {
+      user: true,
+    },
+  });
+
+  if (!authAccount || !authAccount.passwordHash)
+    throw new AppError("Invalid Credentials", 401);
+
+  const isPasswordValid = await bcrypt.compare(
+    data.password,
+    authAccount.passwordHash,
+  );
+
+  if (!isPasswordValid) throw new AppError("Invalid Credentials", 401);
+
+  const accessToken = generateAccessToken(authAccount.userId);
+
+  const refreshToken = generateRefreshToken();
+
+  const refreshTokenExpiry = new Date();
+  refreshTokenExpiry.setDate(refreshTokenExpiry.getDate() + 7);
+
+  await prisma.refreshToken.create({
+    data: {
+      token: refreshToken,
+      userId: authAccount.userId,
+      expiresAt: refreshTokenExpiry,
+    },
+  });
+
+  return {
+    accessToken,
+    refreshToken,
+    user: authAccount.user,
+  };
 }

@@ -9,4 +9,10 @@ export const registerSchema = z.object({
     .max(16, "Maximum 16 characters required"),
 });
 
+export const loginSchema = z.object({
+  email: z.email("Enter a valid email"),
+  password: z.string("Password is required").min(1, "Password is required"),
+});
+
 export type RegisterInput = z.infer<typeof registerSchema>;
+export type LoginInput = z.infer<typeof loginSchema>;
