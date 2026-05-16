@@ -1,6 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-import { loginSchema, registerSchema } from "./auth.validation";
-import { loginUser, registerUser } from "./auth.service";
+import {
+  loginSchema,
+  refreshTokenSchema,
+  registerSchema,
+} from "./auth.validation";
+import { loginUser, refreshAccessToken, registerUser } from "./auth.service";
 
 export async function register(
   req: Request,
@@ -35,4 +39,26 @@ export async function login(req: Request, res: Response, next: NextFunction) {
   } catch (error) {
     next(error);
   }
+}
+
+export async function refresh(req: Request, res: Response, next: NextFunction) {
+  try {
+    const validatedData = refreshTokenSchema.parse(req.body);
+
+    const data = await refreshAccessToken(validatedData.refreshToken);
+
+    return res.status(200).json({
+      success: true,
+      data,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function me(req: Request, res: Response) {
+  return res.status(200).json({
+    success: true,
+    data: req.user,
+  });
 }

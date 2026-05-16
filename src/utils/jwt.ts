@@ -6,9 +6,13 @@ export function generateAccessToken(userId: string) {
     {
       userId,
     },
-    envConfig.JWT_SECRET!,
+    envConfig.JWT_SECRET,
     {
-      expiresIn: "15m",
+      expiresIn: "1d",
     },
   );
+}
+
+export function verifyAccessToken(token: string) {
+  return jwt.verify(token, envConfig.JWT_SECRET) as { userId: string };
 }

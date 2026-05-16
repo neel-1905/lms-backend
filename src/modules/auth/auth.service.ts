@@ -83,3 +83,30 @@ export async function loginUser(data: LoginInput) {
     user: authAccount.user,
   };
 }
+
+export async function refreshAccessToken(refreshToken: string) {
+  const existingRefreshToken = await prisma.refreshToken.findUnique({
+    where: {
+      token: refreshToken,
+    },
+
+    include: {
+      user: true,
+    },
+  });
+
+  if (!existingRefreshToken) throw new AppError("Invalid refresh token", 401);
+
+  if (existingRefreshToken.revoked)
+    throw new AppError("Refresh token revoked", 401);
+
+  if (existingRefreshToken.expiresAt < new Date())
+    throw new AppError("Refresh token expired", 401);
+
+  if (!existingRefreshToken.user.isActive)
+    throw new AppError("Account disabled", 403);
+
+  const accessToken = generateAccessToken(existingRefreshToken.userId);
+
+  return { accessToken };
+}
