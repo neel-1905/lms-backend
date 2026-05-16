@@ -14,4 +14,10 @@ model User {
     authAccounts AuthAccount[]
 
     refreshTokens RefreshToken[]
+
+    roles UserRole[]
+
+    organizationId String
+
+    organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
