@@ -1,0 +1,15 @@
+model MembershipRole {
+    id String @id @default(uuid())
+
+    membershipId String
+
+    roleId String
+
+    membership Membership @relation(fields: [membershipId], references: [id], onDelete: Cascade)
+
+    role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+
+    @@unique([membershipId, roleId])
+}

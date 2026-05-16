@@ -5,7 +5,7 @@ model Organization {
 
     slug String @unique
 
-    users User[]
+    memberships Membership[]
 
     roles Role[]
 
