@@ -9,5 +9,7 @@ model Organization {
 
     roles Role[]
 
+    courses Course[]
+
     createdAt DateTime @default(now())
 }

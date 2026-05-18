@@ -11,6 +11,8 @@ model Membership {
 
     roles MembershipRole[]
 
+    createdCourses Course[]
+
     createdAt DateTime @default(now())
 
     @@unique([userId, organizationId])
