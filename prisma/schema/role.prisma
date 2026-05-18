@@ -11,6 +11,8 @@ model Role {
 
     memberships MembershipRole[]
 
+    permissions RolePermission[]
+
     createdAt DateTime @default(now())
 
     @@unique([organizationId, name])
