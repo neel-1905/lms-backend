@@ -79,3 +79,45 @@ export async function createOrg(data: CreateOrganizationServiceInput) {
 
   return result;
 }
+
+export async function getOrganization(organizationId: string) {
+  const organization = await prisma.organization.findUnique({
+    where: {
+      id: organizationId,
+    },
+
+    include: {
+      memberships: {
+        include: {
+          user: {
+            select: {
+              id: true,
+
+              name: true,
+
+              email: true,
+            },
+          },
+
+          roles: {
+            include: {
+              role: true,
+            },
+          },
+        },
+      },
+
+      roles: {
+        include: {
+          permissions: {
+            include: {
+              permission: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return organization;
+}
