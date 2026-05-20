@@ -30,6 +30,10 @@ export async function hasPermission(
 
   if (!membership) return false;
 
+  const isOwner = membership.roles.some((role) => role.role.name === "OWNER");
+
+  if (isOwner) return true;
+
   for (const membershipRole of membership.roles) {
     const role = membershipRole.role;
 

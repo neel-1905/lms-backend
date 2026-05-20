@@ -10,6 +10,14 @@ export const PERMISSIONS = {
   COURSE_UPDATE: "course.update",
 
   COURSE_DELETE: "course.delete",
+
+  COURSE_VIEW: "course.view",
+
+  MEMBER_REMOVE: "member.remove",
+
+  MEMBER_ROLE_UPDATE: "member.role.update",
+
+  MEMBER_VIEW: "member.view",
 } as const;
 
 export const PERMISSIONS_ARRAY = Object.values(PERMISSIONS);
